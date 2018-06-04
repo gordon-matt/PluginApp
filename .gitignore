@@ -41,3 +41,4 @@ global.json
 BenchmarkDotNet.Artifacts/
 .idea/
 msbuild.binlog
+MainApp/Plugins

@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Test",
+  "FriendlyName": "PluginApp",
+  "SystemName": "PluginApp",
+  "Version": "1.00",
+  "SupportedVersions": [ "1.00" ],
+  "Author": "ABC",
+  "DisplayOrder": 1,
+  "FileName": "PluginApp.dll",
+  "Description": "PluginApp"
+}

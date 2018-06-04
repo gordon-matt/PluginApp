@@ -1,42 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Loader;
-using System.Threading.Tasks;
+using Framework.Infrastructure;
+using Framework.Infrastructure.Configuration;
+using Framework.Plugins.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Net.Http.Headers;
 
 namespace MainApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; }
+
+        public IServiceProvider ServiceProvider { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
             });
 
-            var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            ConfigurePlugin(mvcBuilder.PartManager);
+            //var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //ConfigurePlugins(mvcBuilder.PartManager);
+
+            var infrastructureOptions = new FrameworkInfrastructureOptions();
+            Configuration.Bind(infrastructureOptions);
+            services.AddSingleton(infrastructureOptions);
+
+            var pluginOptions = new FrameworkPluginOptions();
+            Configuration.Bind(pluginOptions);
+            services.AddSingleton(pluginOptions);
+
+            var engine = EngineContext.Create(new AutofacEngine());
+            engine.Initialize(services);
+            var serviceProvider = engine.ConfigureServices(services, Configuration);
+
+            return serviceProvider;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,13 +70,25 @@ namespace MainApp
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            var staticFileOptions = new StaticFileOptions();
-            var fileProvider = new IFileProvider[]
+            string pluginsPath = Path.Combine(Directory.GetCurrentDirectory(), "Plugins");
+            //var fileProviders = new IFileProvider[]
+            //{
+            //    env.ContentRootFileProvider,
+            //    new PhysicalFileProvider(Path.Combine(pluginsPath, "PluginApp", "wwwroot")),
+            //};
+            //app.UseStaticFiles(new StaticFileOptions { FileProvider = new CompositeFileProvider(fileProviders) });
+
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
             {
-                env.ContentRootFileProvider,
-                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "PluginApp", "wwwroot")),
-            };
-            app.UseStaticFiles(new StaticFileOptions { FileProvider = new CompositeFileProvider(fileProvider) });
+                FileProvider = new PhysicalFileProvider(pluginsPath),
+                RequestPath = new PathString("/Plugins"),
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append(HeaderNames.CacheControl, "public,max-age=604800");
+                }
+            });
+
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>
@@ -68,25 +99,27 @@ namespace MainApp
             });
         }
 
-        private void ConfigurePlugin(ApplicationPartManager applicationPartManager)
-        {
-            var pluginAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory.GetCurrentDirectory(), "PluginApp", "PluginApp.dll"));
-            var partFactory = ApplicationPartFactory.GetApplicationPartFactory(pluginAssembly);
+        //private void ConfigurePlugins(ApplicationPartManager applicationPartManager, IHostingEnvironment hostingEnvironment)
+        //{
+        //    CommonHelper.BaseDirectory = hostingEnvironment.ContentRootPath;
 
-            foreach (var part in partFactory.GetApplicationParts(pluginAssembly))
-            {
-                applicationPartManager.ApplicationParts.Add(part);
-            }
+        //    var pluginAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory.GetCurrentDirectory(), "PluginApp", "PluginApp.dll"));
+        //    var partFactory = ApplicationPartFactory.GetApplicationPartFactory(pluginAssembly);
 
-            var relatedAssemblies = RelatedAssemblyAttribute.GetRelatedAssemblies(pluginAssembly, throwOnError: true);
-            foreach (var assembly in relatedAssemblies)
-            {
-                partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
-                foreach (var part in partFactory.GetApplicationParts(assembly))
-                {
-                    applicationPartManager.ApplicationParts.Add(part);
-                }
-            }
-        }
+        //    foreach (var part in partFactory.GetApplicationParts(pluginAssembly))
+        //    {
+        //        applicationPartManager.ApplicationParts.Add(part);
+        //    }
+
+        //    var relatedAssemblies = RelatedAssemblyAttribute.GetRelatedAssemblies(pluginAssembly, throwOnError: true);
+        //    foreach (var assembly in relatedAssemblies)
+        //    {
+        //        partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
+        //        foreach (var part in partFactory.GetApplicationParts(assembly))
+        //        {
+        //            applicationPartManager.ApplicationParts.Add(part);
+        //        }
+        //    }
+        //}
     }
 }
