@@ -3,8 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Areas\Admin\Views\Home\Index.cshtml" />
+  </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Extenso.AspNetCore.Mvc.ExtensoUI" Version="1.0.0" />
+    <PackageReference Include="KendoGridBinder" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   
@@ -17,6 +23,22 @@
   
   <ItemGroup>
     <Folder Include="Plugins\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="Areas\Admin\Views\Home\Index.cshtml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Update="Areas\Admin\Views\Shared\_Layout.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\Admin\Views\_ViewImports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\Admin\Views\_ViewStart.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>
