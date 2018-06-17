@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Infrastructure.Ab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Plugins", "Framework.Plugins\Framework.Plugins.csproj", "{97CB9F0D-2287-4AED-A366-86759E73AC23}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{39D94373-4BF1-49FE-A7E8-17E6867563A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{032BF5D5-1B96-45E6-8F50-18B7ECBB81E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +52,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7CF0E8E7-617B-491D-967B-28CF18AD142F} = {032BF5D5-1B96-45E6-8F50-18B7ECBB81E8}
+		{C39B0F98-BE9E-469B-A06E-B3D05D72C40D} = {39D94373-4BF1-49FE-A7E8-17E6867563A2}
+		{CD232EDE-64AE-4BDE-8384-8F7C5C9C93D7} = {39D94373-4BF1-49FE-A7E8-17E6867563A2}
+		{EDAB2437-CE0D-4771-B248-449F695F8638} = {39D94373-4BF1-49FE-A7E8-17E6867563A2}
+		{97CB9F0D-2287-4AED-A366-86759E73AC23} = {39D94373-4BF1-49FE-A7E8-17E6867563A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2E6BBF7-A846-4706-8585-5291ED6749D5}

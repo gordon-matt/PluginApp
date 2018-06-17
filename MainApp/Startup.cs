@@ -33,15 +33,12 @@ namespace MainApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-            });
-
-            //var mvcBuilder = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            //ConfigurePlugins(mvcBuilder.PartManager);
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            //});
 
             var infrastructureOptions = new FrameworkInfrastructureOptions();
             Configuration.Bind(infrastructureOptions);
@@ -71,12 +68,6 @@ namespace MainApp
             }
 
             string pluginsPath = Path.Combine(Directory.GetCurrentDirectory(), "Plugins");
-            //var fileProviders = new IFileProvider[]
-            //{
-            //    env.ContentRootFileProvider,
-            //    new PhysicalFileProvider(Path.Combine(pluginsPath, "PluginApp", "wwwroot")),
-            //};
-            //app.UseStaticFiles(new StaticFileOptions { FileProvider = new CompositeFileProvider(fileProviders) });
 
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
@@ -89,7 +80,7 @@ namespace MainApp
                 }
             });
 
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
 
             app.UseMvc(routes =>
             {
@@ -98,28 +89,5 @@ namespace MainApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-
-        //private void ConfigurePlugins(ApplicationPartManager applicationPartManager, IHostingEnvironment hostingEnvironment)
-        //{
-        //    CommonHelper.BaseDirectory = hostingEnvironment.ContentRootPath;
-
-        //    var pluginAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory.GetCurrentDirectory(), "PluginApp", "PluginApp.dll"));
-        //    var partFactory = ApplicationPartFactory.GetApplicationPartFactory(pluginAssembly);
-
-        //    foreach (var part in partFactory.GetApplicationParts(pluginAssembly))
-        //    {
-        //        applicationPartManager.ApplicationParts.Add(part);
-        //    }
-
-        //    var relatedAssemblies = RelatedAssemblyAttribute.GetRelatedAssemblies(pluginAssembly, throwOnError: true);
-        //    foreach (var assembly in relatedAssemblies)
-        //    {
-        //        partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
-        //        foreach (var part in partFactory.GetApplicationParts(assembly))
-        //        {
-        //            applicationPartManager.ApplicationParts.Add(part);
-        //        }
-        //    }
-        //}
     }
 }
