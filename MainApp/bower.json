@@ -6,7 +6,8 @@
     "jquery": "3.3.1",
     "jquery-validation": "1.17.0",
     "jquery-validation-unobtrusive": "v3.2.10",
-    "knockout": "knockoutjs#v3.4.2"
+    "knockout": "knockoutjs#v3.4.2",
+    "notifyjs": "v0.4.2"
   },
   "resolutions": {
     "jquery-validation-unobtrusive": "v3.2.10"

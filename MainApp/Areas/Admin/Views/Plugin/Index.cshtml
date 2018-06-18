@@ -53,6 +53,10 @@
 @section Scripts {
     <script src="~/kendo-sdk/js/jszip.min.js"></script>
     <script src="~/kendo-sdk/js/kendo.all.min.js"></script>
+    <script src="~/lib/knockout/dist/knockout.js"></script>
+    <script src="~/lib/notifyjs/dist/notify.js"></script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script type="text/javascript">
         var currentSection = $("#grid-section");

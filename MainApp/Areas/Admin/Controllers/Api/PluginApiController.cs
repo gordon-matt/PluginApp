@@ -7,7 +7,9 @@ using KendoGridBinder;
 using KendoGridBinder.ModelBinder.Mvc;
 using MainApp.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace MainApp.Areas.Admin.Controllers.Api
 {
@@ -27,7 +29,7 @@ namespace MainApp.Areas.Admin.Controllers.Api
         {
             var query = pluginFinder.GetPluginDescriptors(LoadPluginsMode.All).Select(x => (EdmPluginDescriptor)x).AsQueryable();
             var grid = new KendoGrid<EdmPluginDescriptor>(request, query);
-            return Json(grid);
+            return Json(grid, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
         }
 
         [HttpGet]

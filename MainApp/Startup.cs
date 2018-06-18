@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Extenso.AspNetCore.Mvc.ExtensoUI;
+using Extenso.AspNetCore.Mvc.ExtensoUI.Providers;
 using Framework.Infrastructure;
 using Framework.Infrastructure.Configuration;
 using Framework.Plugins.Configuration;
@@ -81,6 +83,8 @@ namespace MainApp
             });
 
             //app.UseCookiePolicy();
+
+            app.UseExtensoUI<Bootstrap3UIProvider>();
 
             app.UseMvc(routes =>
             {

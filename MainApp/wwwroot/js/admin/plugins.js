@@ -11,7 +11,7 @@ var ViewModel = function () {
 
     self.validator = false;
 
-    self.attached = function () {
+    self.init = function () {
         currentSection = $("#grid-section");
         
         self.validator = $("#form-section-form").validate({
@@ -22,9 +22,7 @@ var ViewModel = function () {
         });
 
         $("#Grid").kendoGrid({
-            data: null,
             dataSource: {
-                type: "odata",
                 transport: {
                     read: {
                         url: apiUrl + "/get",
@@ -93,10 +91,10 @@ var ViewModel = function () {
     };
 
     self.edit = function (systemName) {
-        systemName = replaceAll(systemName, ".", "-");
+        systemName = self.replaceAll(systemName, ".", "-");
         
         $.ajax({
-            url: apiUrl + "('" + systemName + "')",
+            url: apiUrl + "/" + systemName,
             type: "GET",
             dataType: "json",
             async: false
@@ -153,7 +151,7 @@ var ViewModel = function () {
     };
 
     self.install = function (systemName) {
-        systemName = replaceAll(systemName, ".", "-");
+        systemName = self.replaceAll(systemName, ".", "-");
 
         $.ajax({
             url: "/admin/plugins/install/" + systemName,
@@ -178,7 +176,7 @@ var ViewModel = function () {
     }
 
     self.uninstall = function (systemName) {
-        systemName = replaceAll(systemName, ".", "-");
+        systemName = self.replaceAll(systemName, ".", "-");
 
         $.ajax({
             url: "/admin/plugins/uninstall/" + systemName,
@@ -201,4 +199,12 @@ var ViewModel = function () {
             console.log(textStatus + ': ' + errorThrown);
         });
     }
+
+    self.replaceAll = function (string, find, replace) {
+        return string.replace(new RegExp(self.escapeRegExp(find), 'g'), replace);
+    };
+
+    self.escapeRegExp = function (string) {
+        return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    };
 }
